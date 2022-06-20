@@ -1,4 +1,3 @@
-import requests
 from pprint import pprint
 import json
 from typing import Literal, Union, Optional, List, Any
@@ -8,8 +7,7 @@ from pyuserside.schema.commutation import CommutationData, CommutationDataWithFi
 from pyuserside.schema.customer import CustomerData
 from pyuserside.schema.node import NodeData
 from pyuserside.schema.task import TaskData
-import pyuserside.validators as validators
-
+import pyuserside.validators
 
 class GenericUsersideCategory:
     def __init__(self, category: str, api: 'UsersideAPI'):
@@ -30,7 +28,7 @@ class Device(GenericUsersideCategory):
                             data_typer: Literal['ip', 'mac', 'inventory_number', 'serial_number'],
                             data_value: str) -> int:
         params = {'object_type': object_type, 'data_typer': data_typer, 'data_value': data_value}
-        validators.device.validate('get_device_id', **params)
+        pyuserside.validators.device.validate('get_device_id', **params)
         response = await self._api.request(self._cat, 'get_device_id', **params)
         return response.get('id')
 
@@ -45,7 +43,7 @@ class Device(GenericUsersideCategory):
                   'is_online': is_online,
                   'is_hide_ifaces_data': is_hide_ifaces_data}
         params = {k: v for k, v in params.items() if v is not None}
-        validators.device.validate('get_data', **params)
+        pyuserside.validators.device.validate('get_data', **params)
         response = await self._api.request(self._cat, 'get_data', **params)
         response_class = DeviceData if is_hide_ifaces_data in [1, '1'] else DeviceDataWithIfaces
         return [response_class(**parameters) for parameters in response['data'].values()]
@@ -62,7 +60,7 @@ class Commutation(GenericUsersideCategory):
                   'object_id': object_id,
                   'is_finish_data': is_finish_data}
         params = {k: v for k, v in params.items() if v is not None}
-        validators.commutation.validate('get_data', **params)
+        pyuserside.validators.commutation.validate('get_data', **params)
         response = await self._api.request(self._cat, 'get_data', **params)
         response = response['data']
         response_class = CommutationDataWithFinishData if is_finish_data in [1, '1'] else CommutationData
@@ -86,7 +84,7 @@ class Commutation(GenericUsersideCategory):
                   'object2_port': object2_port
                   }
         params = {k: v for k, v in params.items() if v is not None}
-        validators.commutation.validate('add', **params)
+        pyuserside.validators.commutation.validate('add', **params)
         await self._api.request(self._cat, 'add', **params)
 
     async def delete(self, object_type: str, object_id: Union[str, int], object_port: Optional[Union[str, int]] = None):
@@ -95,7 +93,7 @@ class Commutation(GenericUsersideCategory):
                   'object_port': object_port,
                   }
         params = {k: v for k, v in params.items() if v is not None}
-        validators.commutation.validate('delete', **params)
+        pyuserside.validators.commutation.validate('delete', **params)
         await self._api.request(self._cat, 'delete', **params)
 
 

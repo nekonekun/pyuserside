@@ -1,8 +1,6 @@
-from typing import List
 from datetime import datetime
 from dataclasses import dataclass
 import ipaddress
-from pprint import pprint
 
 
 @dataclass

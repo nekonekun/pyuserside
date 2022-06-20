@@ -1,0 +1,5 @@
+venv
+dist
+src/pyuserside.egg-info
+update
+.idea
