@@ -1,52 +1,40 @@
 import json.decoder
 import httpx
-
-
-class UsersideCategory:
-    def __init__(self, category: str, api: 'UsersideAPI'):
-        self._api = api
-        self._cat = category
-
-    def __getattr__(self, action: str):
-        def method(**kwargs):
-            return self._api._request(cat=self._cat,
-                                      action=action,
-                                      **kwargs)
-        return method
+from .exceptions import UsersideException
+from .parser import parse_response
 
 
 class UsersideAPI:
-    def __init__(self,
-                 url: str,
-                 key: str, ):
-        self._url = url
-        self._key = key
-        self._in_use = 0
-        self._session = httpx.Client(params={'key': self._key})
+    def __init__(self, url: str, key: str, session: httpx.Client = None):
+        self.url = url
+        self.key = key
+        self.session = session or httpx.Client()
 
-    def _request(self, cat: str, action: str, **kwargs):
-        params = {'cat': cat, 'action': action}
-        params.update(kwargs)
-        response = self._session.get(url=self._url, params=params)
+    def __getattr__(self, category):
+        return UsersideCategory(self, category)
+
+
+class UsersideCategory:
+    def __init__(self, api: UsersideAPI, category: str):
+        self.api = api
+        self.category = category
+
+    def _request(self, action, **kwargs):
+        params = {'key': self.api.key,
+                  'cat': self.category,
+                  'action': action}
+        params = params | kwargs
+        response = self.api.session.get(self.api.url, params=params)
         try:
             content = response.json()
         except json.decoder.JSONDecodeError:
-            raise RuntimeError('Non-JSON response')
+            raise UsersideException('Not a valid JSON response')
         if not response.status_code == 200:
-            raise RuntimeError(content.get('error', 'No error from Userside'))
-        elif not response.text:
-            raise RuntimeError('Empty response')
-        return self._parse_response(content)
+            raise UsersideException(
+                content.get('error', 'No error description provided'))
+        return parse_response(content)
 
-    @staticmethod
-    def _parse_response(response: dict):
-        if (id_ := response.get('id')) is not None:
-            return id_
-        if (data := response.get('data')) is not None:
-            return data
-        if (list_ := response.get('list')) is not None:
-            return list_.split(',')
-        return response
-
-    def __getattr__(self, item):
-        return UsersideCategory(item, self)
+    def __getattr__(self, action):
+        def _action(**kwargs):
+            return self._request(action, **kwargs)
+        return _action
