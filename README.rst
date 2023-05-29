@@ -1,1 +1,0 @@
-Userside API client implementation
