@@ -1,2 +1,5 @@
+"""Bunch of exception classes"""
+
+
 class UsersideException(BaseException):
-    pass
+    """Most generic exception"""
