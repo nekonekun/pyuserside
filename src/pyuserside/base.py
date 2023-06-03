@@ -1,11 +1,50 @@
-"""
-Basic methods to build request or parse response
-"""
+"""Base classes and functions"""
 import json
-
+from typing import Type, TypeVar
 import httpx
 
 from pyuserside.exceptions import UsersideException
+
+AnyCategory = TypeVar("AnyCategory", bound="BaseUsersideCategory")
+
+
+class BaseUsersideAPI:
+    """Base API class, async-agnostic"""
+
+    def __init__(self, url: str, key: str, category_class: Type[AnyCategory]):
+        self.url = url
+        self.key = key
+        self.category_class = category_class
+
+    def __getattr__(self, category):
+        return self.category_class(self, category)
+
+    def __repr__(self):
+        hidden_key = "*" * len(self.key)
+        result = (
+            f"{self.__class__.__name__}"
+            f"<url: {self.url}, "
+            f"key: {hidden_key}, "
+            f"category class: {self.category_class.__name__}, >"
+        )
+        return result
+
+    def __str__(self):
+        return f"{self.__class__.__name__}"
+
+
+class BaseUsersideCategory:
+    """Base category class, async-agnostic"""
+
+    def __init__(self, api: BaseUsersideAPI, category: str):
+        self.api = api
+        self.category = category
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}<api: {self.api}, category: {self.category}"
+
+    def __str__(self):
+        return f"{self.__class__.__name__}[{self.category}]"
 
 
 def validate_response(response: httpx.Response):
