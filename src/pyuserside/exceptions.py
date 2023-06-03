@@ -1,4 +1,4 @@
-"""Bunch of exception classes"""
+"""Userside exceptions collection"""
 
 
 class UsersideException(BaseException):

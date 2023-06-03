@@ -1,27 +1,27 @@
 """Async Userside API client module"""
 import httpx
 
-from pyuserside.base import prepare_request, validate_response, parse_response
+from pyuserside.base import (
+    prepare_request,
+    validate_response,
+    parse_response,
+    BaseUsersideAPI,
+    BaseUsersideCategory,
+)
 
 
-class UsersideAPI:
-    """Sync Userside API client class"""
+class UsersideAPI(BaseUsersideAPI):  # pylint: disable=too-few-public-methods
+    """Userside API async client class"""
 
     def __init__(self, url: str, key: str, session: httpx.AsyncClient = None):
-        self.url = url
-        self.key = key
+        super().__init__(url, key, AsyncUsersideCategory)
         self.session = session or httpx.AsyncClient()
 
-    def __getattr__(self, category):
-        return UsersideCategory(self, category)
 
-
-class UsersideCategory:
-    """Generic userside category"""
-
-    def __init__(self, api: UsersideAPI, category: str):
-        self.api = api
-        self.category = category
+class AsyncUsersideCategory(
+    BaseUsersideCategory
+):  # pylint: disable=too-few-public-methods
+    """Generic async userside category"""
 
     async def _request(self, action, **kwargs):
         params = prepare_request(
