@@ -1,4 +1,10 @@
 # Pyuserside
+
+[![MIT License](https://img.shields.io/github/license/nekonekun/pyuserside)](https://opensource.org/licenses/MIT)
+[![Supported python versions](https://img.shields.io/pypi/pyversions/pyuserside)](https://pypi.org/project/pyuserside/)
+[![PyPi Package Version](https://img.shields.io/pypi/v/pyuserside)](https://pypi.org/project/pyuserside/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 Python API client library for [Userside](https://www.python.org/)
 
 ### Installation
