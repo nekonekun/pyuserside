@@ -82,5 +82,46 @@ def prepare_request(key: str, cat: str, action: str, **kwargs):
     for field_name, field_value in kwargs.items():
         if isinstance(field_value, list):
             field_name = ",".join(field_value)
-        params[field_name] = field_value
+        if field_value:
+            params[field_name] = field_value
     return params
+
+
+class SyncUsersideCategory(
+    BaseUsersideCategory
+):  # pylint: disable=too-few-public-methods
+    """Generic sync userside category"""
+
+    def _request(self, action, **kwargs):
+        params = prepare_request(
+            key=self.api.key, cat=self.category, action=action, **kwargs
+        )
+        response = self.api.session.get(self.api.url, params=params)
+        content = validate_response(response)
+        return parse_response(content)
+
+    def __getattr__(self, action):
+        def _action(**kwargs):
+            return self._request(action, **kwargs)
+
+        return _action
+
+
+class AsyncUsersideCategory(
+    BaseUsersideCategory
+):  # pylint: disable=too-few-public-methods
+    """Generic async userside category"""
+
+    async def _request(self, action, **kwargs):
+        params = prepare_request(
+            key=self.api.key, cat=self.category, action=action, **kwargs
+        )
+        response = await self.api.session.get(self.api.url, params=params)
+        content = validate_response(response)
+        return parse_response(content)
+
+    def __getattr__(self, action):
+        async def _action(**kwargs):
+            return await self._request(action, **kwargs)
+
+        return _action
