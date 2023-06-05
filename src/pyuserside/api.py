@@ -1,6 +1,7 @@
 """Userside API sync client module"""
 import httpx
 from pyuserside.base import BaseUsersideAPI, SyncUsersideCategory
+from pyuserside.categories.system import System
 
 
 class UsersideAPI(BaseUsersideAPI):  # pylint: disable=too-few-public-methods
@@ -9,3 +10,4 @@ class UsersideAPI(BaseUsersideAPI):  # pylint: disable=too-few-public-methods
     def __init__(self, url: str, key: str, session: httpx.Client = None):
         super().__init__(url, key, SyncUsersideCategory)
         self.session = session or httpx.Client()
+        self.system = System(self)

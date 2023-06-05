@@ -12,8 +12,8 @@ class System(SyncUsersideCategory):  # pylint: disable=too-few-public-methods
     def __init__(self, api: BaseUsersideAPI):
         super().__init__(api, "system")
 
-    def get_system_info(self):
+    def get_system_info(self) -> SystemInfo:
         """get system information about Userside"""
         raw_response = self._request("get_system_info")
-        response = SystemInfo.parse_obj(raw_response)
+        response = SystemInfo(raw_response)
         return response
