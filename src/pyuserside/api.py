@@ -2,6 +2,7 @@
 import httpx
 from pyuserside.base import BaseUsersideAPI, SyncUsersideCategory
 from pyuserside.categories.system import System
+from pyuserside.categories.notepad import Notepad
 
 
 class UsersideAPI(BaseUsersideAPI):  # pylint: disable=too-few-public-methods
@@ -11,3 +12,4 @@ class UsersideAPI(BaseUsersideAPI):  # pylint: disable=too-few-public-methods
         super().__init__(url, key, SyncUsersideCategory)
         self.session = session or httpx.Client()
         self.system = System(self)
+        self.notepad = Notepad(self)
