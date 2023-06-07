@@ -90,6 +90,9 @@ class Chapter:  # pylint: disable=too-few-public-methods
         result += ">"
         return result
 
+    def __getitem__(self, item):
+        return getattr(self, item)
+
 
 class ChapterSet:
     """
@@ -216,6 +219,9 @@ class Note:  # pylint: disable=too-few-public-methods
         result += f"fields: [{len(self.fields)}]"
         result += ">"
         return result
+
+    def __getitem__(self, item: str):
+        return getattr(self, item)
 
 
 class NoteSet:
