@@ -7,3 +7,7 @@ class UsersideException(BaseException):
 
 class ParseError(UsersideException):
     """Parsing error"""
+
+
+class InvalidRequestParametersError(UsersideException):
+    """Invalid parameter error"""

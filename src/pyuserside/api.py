@@ -3,6 +3,7 @@ import httpx
 from pyuserside.base import BaseUsersideAPI, SyncUsersideCategory
 from pyuserside.categories.system import System
 from pyuserside.categories.notepad import Notepad
+from pyuserside.categories.commutation import Commutation
 
 
 class UsersideAPI(BaseUsersideAPI):  # pylint: disable=too-few-public-methods
@@ -13,3 +14,4 @@ class UsersideAPI(BaseUsersideAPI):  # pylint: disable=too-few-public-methods
         self.session = session or httpx.Client()
         self.system = System(self)
         self.notepad = Notepad(self)
+        self.commutation = Commutation(self)
